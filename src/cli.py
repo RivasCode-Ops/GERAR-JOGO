@@ -9,6 +9,7 @@ from .tracker import Tracker, NOME_FAIXAS
 from .models import Concurso
 from .scraper import sincronizar
 from .export import jogos_para_csv, jogos_para_texto
+from .notifier import Vigia
 
 _db = ConcursoDB()
 _tracker = Tracker(concursos=_db)
@@ -217,6 +218,9 @@ def _menu_sincronizar():
 
 
 def main():
+    vigia = Vigia(_db, _tracker, intervalo=300)
+    vigia.iniciar()
+
     while True:
         print(f"\n{_HORIZONTAL}")
         print("  GERADOR LOTOFACIL - Plataforma de Gestão")

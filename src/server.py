@@ -13,6 +13,7 @@ from src.generator import gerar_multiplos_jogos
 from src.scraper import sincronizar
 from src.export import jogos_para_csv, jogos_para_texto
 from src.models import Concurso
+from src.notifier import Vigia
 
 _db = ConcursoDB()
 _tracker = Tracker(concursos=_db)
@@ -358,6 +359,9 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main(port: int = 5000):
+    vigia = Vigia(_db, _tracker, intervalo=300)
+    vigia.iniciar()
+
     server = HTTPServer(("0.0.0.0", port), Handler)
     print(f"\n  {'='*50}")
     print(f"  LOTOFACIL - Servidor Web")
