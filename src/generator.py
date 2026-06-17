@@ -10,13 +10,13 @@ from .validator import (
 )
 
 _REPETIR_PADRAO = 9
-RangeRepetir = Union[int, tuple[int, int]]
+RangeRepetir = Union[int, tuple[int, int], list[int]]
 
 
 def _resolver_repetir(repetir: Optional[RangeRepetir] = None) -> int:
     if repetir is None:
         return _REPETIR_PADRAO
-    if isinstance(repetir, tuple):
+    if isinstance(repetir, (tuple, list)):
         return random.randint(repetir[0], repetir[1])
     return repetir
 
