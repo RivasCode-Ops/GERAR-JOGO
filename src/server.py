@@ -69,7 +69,10 @@ tr:hover td{background:#0f172a}
 </head>
 <body>
 <div class="container">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
 <h1>&#127922; LOTOFÁCIL</h1>
+<div id="status-servidor" style="font-size:.75rem;color:#94a3b8">Verificando...</div>
+</div>
 <p class="sub">Plataforma de Gestão de Jogos</p>
 
 <nav id="nav">
@@ -132,6 +135,17 @@ tr:hover td{background:#0f172a}
 
 <script>
 const BASE = '';
+let serverOk = false;
+
+function testarConexao() {
+  fetch('/api/ping')
+    .then(r=>r.json())
+    .then(d=>{serverOk=true; document.getElementById('status-servidor').innerHTML='<span style="color:#4ade80">Conectado</span>'})
+    .catch(e=>{serverOk=false; document.getElementById('status-servidor').innerHTML='<span class="erro">Desconectado</span>'});
+}
+setInterval(testarConexao, 5000);
+testarConexao();
+
 function mostrar(id) {
 document.querySelectorAll('.painel').forEach(p=>p.classList.remove('ativo'));
 document.getElementById('p-'+id).classList.add('ativo');
@@ -143,9 +157,10 @@ document.getElementById('modo-rep').onchange=function(){
 document.getElementById('rep-personalizado').style.display=this.value==='personalizado'?'block':'none';
 };
 function api(path,body,cb){
+if(!serverOk){cb({erro:'Servidor offline. Verifique se o terminal esta rodando.'});return}
 const opts={method:'POST',headers:{'Content-Type':'application/json'}};
 if(body)opts.body=JSON.stringify(body);
-fetch(path,opts).then(r=>r.json()).then(cb).catch(e=>cb({erro:e.message}));
+fetch(path,opts).then(r=>{if(!r.ok)return r.json().then(e=>cb(e));return r.json()}).then(cb).catch(e=>cb({erro:e.message}));
 }
 function carregarUltimo(){
 fetch('/api/ultimo').then(r=>r.json()).then(d=>{
@@ -273,6 +288,8 @@ class Handler(BaseHTTPRequestHandler):
 
         if path == "/":
             self._html(_gerar_html())
+        elif path == "/api/ping":
+            self._json({"status": "ok", "concursos": _db.total(), "jogos": _tracker.total_jogos()})
         elif path == "/api/ultimo":
             ultimo = _db.ultimo()
             if not ultimo:
