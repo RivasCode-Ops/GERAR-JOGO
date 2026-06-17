@@ -8,3 +8,5 @@ build/
 data/
 env/
 data/
+
+PROMPT *.txt
