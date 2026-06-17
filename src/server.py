@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import socket
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 from datetime import date, datetime
@@ -379,11 +380,17 @@ def main(port: int = 5000):
     vigia = Vigia(_db, _tracker, intervalo=300)
     vigia.iniciar()
 
-    server = HTTPServer(("0.0.0.0", port), Handler)
+    host = "127.0.0.1"
+    try:
+        socket.gethostbyname("localhost")
+    except socket.gaierror:
+        print("  [!] localhost nao resolve. Usando 127.0.0.1 diretamente.")
+
+    server = HTTPServer((host, port), Handler)
     print(f"\n  {'='*50}")
     print(f"  LOTOFACIL - Servidor Web")
     print(f"  {'='*50}")
-    print(f"  Acesse: http://127.0.0.1:{port}")
+    print(f"  Acesse: http://{host}:{port}")
     print(f"  Pressione Ctrl+C para parar")
     print(f"  {'='*50}\n")
     try:
