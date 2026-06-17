@@ -383,7 +383,7 @@ def main(port: int = 5000):
     print(f"\n  {'='*50}")
     print(f"  LOTOFACIL - Servidor Web")
     print(f"  {'='*50}")
-    print(f"  Acesse: http://localhost:{port}")
+    print(f"  Acesse: http://127.0.0.1:{port}")
     print(f"  Pressione Ctrl+C para parar")
     print(f"  {'='*50}\n")
     try:
